@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -8,7 +9,7 @@ import (
 )
 
 type Reader struct {
-	list []*BupItem
+	list []*Item
 	root string
 	when time.Time
 }
@@ -68,7 +69,7 @@ func (r *Reader) readItem(path string) {
 		info.What |= iwSymlink
 	}
 
-	item := &BupItem{
+	item := &Item{
 		Path: path,
 		Info: []*Info{info},
 	}
@@ -92,4 +93,18 @@ func (r Reader) pathJoin(a, b string) string {
 		return a
 	}
 	return filepath.Join(a, b)
+}
+
+type byName []fs.DirEntry
+
+func (e byName) Len() int {
+	return len(e)
+}
+
+func (e byName) Less(i, j int) bool {
+	return e[i].Name() < e[j].Name()
+}
+
+func (e byName) Swap(i, j int) {
+	e[i], e[j] = e[j], e[i]
 }

@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func Read(root string) []*BupItem {
+func Read(root string) []*Item {
 	r := &Reader{
 		root: root,
 		when: time.Now(),
@@ -18,7 +18,7 @@ func Read(root string) []*BupItem {
 	return r.list
 }
 
-func readKind(fi fs.FileInfo) InfoKind {
+func readKind(fi fs.FileInfo) Kind {
 	switch fi.Mode() & fs.ModeType {
 	case 0:
 		return ikRegular
@@ -75,18 +75,4 @@ func readSymlink(path string) BupSymlink {
 	return BupSymlink{
 		Target: target,
 	}
-}
-
-type byName []fs.DirEntry
-
-func (e byName) Len() int {
-	return len(e)
-}
-
-func (e byName) Less(i, j int) bool {
-	return e[i].Name() < e[j].Name()
-}
-
-func (e byName) Swap(i, j int) {
-	e[i], e[j] = e[j], e[i]
 }
